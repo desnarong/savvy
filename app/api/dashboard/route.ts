@@ -32,10 +32,13 @@ export async function GET(req: NextRequest) {
 
     // คำนวณข้อมูลสำหรับแต่ละหมวด
     const data = categories.map(cat => {
-      const budget = budgets.find(b => b.categoryId === cat.id)?.amount || 0;
+      // ✅ แปลง Decimal เป็น number
+      const budget = Number(budgets.find(b => b.categoryId === cat.id)?.amount || 0);
       const actual = transactions
         .filter(t => t.categoryId === cat.id)
         .reduce((sum, t) => sum + Number(t.amount), 0);
+      
+      // ✅ ตอนนี้ budget เป็น number แล้ว
       const percent = budget > 0 ? (actual / budget) * 100 : 0;
 
       let status = "OK";
@@ -46,7 +49,7 @@ export async function GET(req: NextRequest) {
         categoryId: cat.id,
         categoryName: cat.name,
         icon: cat.icon,
-        budget: Number(budget),
+        budget: budget,
         actual: Number(actual),
         percent: Math.round(percent),
         status

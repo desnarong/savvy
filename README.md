@@ -6,7 +6,7 @@
 
 ### Prerequisites
 - Node.js 18+
-- Docker & Docker Compose
+- Docker & Docker Compose V2
 - PostgreSQL 15 (optional - ใช้ Docker)
 
 ### Local Development
@@ -37,11 +37,11 @@ npm run dev
 
 ```bash
 # 1. Build and run
-docker-compose up -d
+docker compose up -d
 
 # 2. Run migrations
-docker exec savvy_app npx prisma db push
-docker exec savvy_app npx prisma db seed
+docker compose exec savvy_app npx prisma db push
+docker compose exec savvy_app npx prisma db seed
 
 # 3. Access the app
 # Open https://yourdomain.com (หรือ http://localhost ถ้า local)
