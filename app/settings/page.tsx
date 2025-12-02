@@ -3,11 +3,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { User, Save, Lock, Camera, AlertCircle, Loader2, Download, Trash2, ShieldAlert, UploadCloud, Crown, CreditCard } from "lucide-react";
-// ✅ new UI components
 import { Card } from "@/components/Card";
-import Button from "@/components/Button";
-import Input from "@/components/Input";
+import { Button } from "@/components/Button";
+import { Input } from "@/components/Input";
 
 // --- ⚙️ ตั้งค่า Cloudinary ---
 const CLOUD_NAME = "dsabmbgxn"; 
