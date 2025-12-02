@@ -9,6 +9,11 @@ savvyapp.cc, www.savvyapp.cc {
     reverse_proxy app:3000
 }
 
+# ✅ Explicitly handle HTTP (Cloudflare Flexible mode)
+http://savvyapp.cc, http://www.savvyapp.cc {
+    reverse_proxy app:3000
+}
+
 # ✅ Local testing
 localhost {
     reverse_proxy app:3000
