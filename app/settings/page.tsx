@@ -199,36 +199,38 @@ export default function SettingsPage() {
                 
                 {/* Subscription Section */}
                 <Card className="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                     <div>
-                         <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                             สถานะสมาชิก
-                             {(session?.user as any)?.plan === 'PRO' ? (
-                                 <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md text-[10px] font-bold border border-amber-200 flex items-center gap-1 uppercase tracking-wide">
-                                     <Crown size={10} fill="currentColor"/> Pro Member
-                                 </span>
-                             ) : (
-                                 <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md text-[10px] font-bold border border-slate-300 uppercase tracking-wide">Free Starter</span>
-                             )}
-                         </h3>
-                         <p className="text-sm text-slate-500 mt-1">
-                             {(session?.user as any)?.plan === 'PRO' 
-                                 ? "คุณได้รับสิทธิ์ใช้งานเต็มรูปแบบ สร้างหมวดหมู่ได้ไม่จำกัด" 
-                                 : "จำกัดการสร้างหมวดหมู่สูงสุด 5 รายการ"}
-                         </p>
-                     </div>
-                     
-                     {/* Action Button: Upgrade or Downgrade */}
-                     {(session?.user as any)?.plan === 'PRO' ? (
+                    <div>
+                        <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <Crown size={20} className="text-amber-500 fill-amber-500"/> สถานะสมาชิก
+                        </h3>
+                        <p className="text-sm text-slate-500 mt-1">แพ็กเกจ: <span className="font-bold text-slate-700">{(session?.user as any)?.plan === 'PRO' ? '✨ Pro Plan' : '🆓 Free Plan'}</span></p>
+                    </div>
+                    <div>
+                        {(session?.user as any)?.plan === 'PRO' ? (
                             <Button onClick={handleDowngrade} variant="secondary">ยกเลิก Pro Plan</Button>
                         ) : (
-                            <Link href="/pricing"><Button variant="primary"><CreditCard size={16} /> อัปเกรดทันที</Button></Link>
+                            <Link href="/pricing"><Button variant="primary"><CreditCard size={16}/> อัปเกรดทันที</Button></Link>
                         )}
-            </div>
+                    </div>
+                </Card>
 
-            <hr className="border-slate-100"/>
+                <hr className="border-slate-100"/>
 
-            <div className="text-sm text-slate-500">
-                <p className="mb-1">การชำระเงินถัดไปของคุณจะเกิดขึ้นในวันที่:</p>
-                <p className="font-bold text-slate-700">15 มีนาคม 2023</p>
+                <div className="text-sm text-slate-500">
+                    <p className="mb-1">การชำระเงินถัดไปของคุณจะเกิดขึ้นในวันที่:</p>
+                    <p className="font-bold text-slate-800">{new Date(new Date().setDate(new Date().getDate() + 30)).toLocaleDateString('th-TH')}</p>
+                </div>
+
+                <hr className="border-slate-100"/>
+
+                <div className="space-y-2">
+                    <Button variant="secondary" className="w-full"><Download size={18}/> Export CSV</Button>
+                    <Button variant="danger" className="w-full" onClick={() => alert("ระบบกำลังพัฒนา")}><Trash2 size={18}/> ลบบัญชีถาวร</Button>
+                </div>
             </div>
-        
+        )}
+      </Card>
+      </div>
+    </div>
+   );
+ }
