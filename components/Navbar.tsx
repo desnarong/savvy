@@ -5,11 +5,18 @@ import Link from "next/link";
 import { Menu, X, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "./Button";
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const { status } = useSession();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // ซ่อน Navbar บนหน้า Landing ถ้ายังไม่ล็อกอิน
+  if (status !== "authenticated" && pathname === "/") {
+    return null;
+  }
 
   return (
     <nav className="sticky top-0 z-40 bg-white dark:bg-neutral-800 border-b border-neutral-100 dark:border-neutral-700">
@@ -21,7 +28,7 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-4">
-          {session ? (
+          {status === "authenticated" ? (
             <>
               <Link
                 href="/dashboard"
@@ -56,7 +63,7 @@ export default function Navbar() {
 
         {/* User Menu */}
         <div className="flex items-center gap-2">
-          {session ? (
+          {status === "authenticated" ? (
             <Button variant="ghost" onClick={() => signOut()}>
               <LogOut />
             </Button>
@@ -72,7 +79,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {open && session && (
+      {open && status === "authenticated" && (
         <div className="md:hidden bg-neutral-50 p-3 space-y-2">
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/budgets">Budgets</Link>

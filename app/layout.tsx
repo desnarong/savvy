@@ -1,11 +1,9 @@
-"use client";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { useSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,29 +26,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { data: session, status } = useSession();
-  const isAuthenticated = status === "authenticated";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
-            
-            {/* แสดง Navbar เฉพาะตอน authenticated */}
-            {isAuthenticated && <Navbar />}
-
-            {/* ส่วนเนื้อหาหลัก */}
+            {/* Navbar (จะซ่อนเองเมื่ออยู่หน้า Landing ผ่าน Navbar.tsx) */}
+            <Navbar />
             <main className="flex-grow">
-              {isAuthenticated ? (
-                <div className="container py-8">
-                  {children}
-                </div>
-              ) : (
-                children
-              )}
+              <div className="container py-8">
+                {children}
+              </div>
             </main>
-
             <Footer />
           </div>
         </AuthProvider>
