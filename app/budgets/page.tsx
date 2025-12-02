@@ -6,6 +6,10 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Copy, Pencil, X, Wallet, CheckCircle2 } from "lucide-react";
 import { IconPicker, CategoryIcon, iconOptions } from "@/components/IconPicker";
+// เพิ่ม UI imports
+import Card from "@/components/Card";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
 
 type CategoryWithBudget = {
   id: string;
@@ -168,153 +172,109 @@ export default function BudgetPage() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
-      
-      {/* Header & Total Budget Card */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-              <h1 className="text-2xl font-bold text-slate-800">จัดการงบประมาณ</h1>
-              <p className="text-slate-500 font-medium mt-1">ประจำเดือน {currentMonth}/{currentYear}</p>
-          </div>
-
-          <div className="bg-blue-600 text-white px-8 py-4 rounded-2xl shadow-lg shadow-blue-200 w-full md:w-auto flex flex-col items-end">
-              <span className="text-xs opacity-80 font-bold uppercase tracking-wide">งบรวมทั้งเดือน</span>
-              <span className="text-3xl font-bold">฿{totalBudget.toLocaleString()}</span>
-          </div>
-      </div>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="container">
+       {/* Header & Total Budget Card */}
+      <Card className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">จัดการงบประมาณ</h1>
+          <p className="text-sm text-neutral-500 mt-1">ประจำเดือน {currentMonth}/{currentYear}</p>
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="text-xs text-neutral-500">งบรวมทั้งเดือน</span>
+          <div className="text-3xl font-extrabold">฿{totalBudget.toLocaleString()}</div>
+        </div>
+      </Card>
 
       {/* Action Bar: Create & Copy */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Create New Category */}
-          <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-              <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2 text-lg">
-                  <div className="w-1.5 h-6 bg-green-500 rounded-full"></div>
-                  สร้างหมวดหมู่ใหม่
-              </h3>
+          <div className="lg:col-span-2">
+            <Card className="p-6">
+               <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2 text-lg">
+                   <div className="w-1.5 h-6 bg-green-500 rounded-full"></div>
+                   สร้างหมวดหมู่ใหม่
+               </h3>
               <div className="flex flex-col gap-4">
-                  <div className="flex gap-3">
-                      <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-center justify-center text-blue-600">
-                          <CategoryIcon iconName={newCategoryIcon} size={24} />
-                      </div>
-                      <input 
-                          type="text" 
-                          placeholder="ชื่อหมวด (เช่น ค่าคอนโด)" 
-                          className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition font-medium"
-                          value={newCategoryName}
-                          onChange={(e) => setNewCategoryName(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
-                      />
+                <div className="flex gap-3">
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-center justify-center">
+                    <CategoryIcon iconName={newCategoryIcon} size={24}/>
                   </div>
+                  <Input placeholder="ชื่อหมวด (เช่น ค่าคอนโด)" value={newCategoryName} onChange={(e)=>setNewCategoryName(e.target.value)} onKeyDown={(e)=> e.key==='Enter' && handleAddCategory()} />
+                </div>
+                   <div>
+                     <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide ml-1">เลือกไอคอน</p>
+                     <IconPicker selectedIcon={newCategoryIcon} onSelect={setNewCategoryIcon} />
+                   </div>
                   
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide ml-1">เลือกไอคอน</p>
-                    <IconPicker selectedIcon={newCategoryIcon} onSelect={setNewCategoryIcon} />
-                  </div>
-                  
-                  <button 
-                      onClick={handleAddCategory}
-                      disabled={!newCategoryName}
-                      className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-black transition disabled:opacity-50 disabled:cursor-not-allowed self-end mt-2"
-                  >
-                      + เพิ่มหมวดหมู่
-                  </button>
+                <div className="flex justify-end mt-2">
+                  <Button onClick={handleAddCategory} disabled={!newCategoryName}>+ เพิ่มหมวดหมู่</Button>
+                </div>
               </div>
+            </Card>
           </div>
 
           {/* Copy Option */}
-          <div className="bg-blue-50/50 rounded-3xl p-6 border border-blue-100 flex flex-col justify-center items-center text-center space-y-4">
-              <div className="bg-white p-4 rounded-full text-blue-600 shadow-sm">
-                  <Copy size={28} />
-              </div>
+          <div>
+            <Card className="p-6 flex flex-col items-center text-center gap-4">
+              <div className="bg-white p-4 rounded-full text-blue-600 shadow-sm"><Copy size={28}/></div>
               <div>
-                  <h3 className="font-bold text-blue-900 text-lg">คัดลอกงบเดือนเก่า</h3>
-                  <p className="text-sm text-blue-600/80 mt-1">ดึงงบจากเดือนที่แล้วมาใช้ทันที</p>
+                <h3 className="font-bold text-blue-900 text-lg">คัดลอกงบเดือนเก่า</h3>
+                <p className="text-sm text-blue-600/80 mt-1">ดึงงบจากเดือนที่แล้วมาใช้ทันที</p>
               </div>
-              <button 
-                  onClick={handleCopy}
-                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 text-sm"
-              >
-                  กดเพื่อคัดลอก
-              </button>
+              <Button onClick={handleCopy} className="w-full">กดเพื่อคัดลอก</Button>
+            </Card>
           </div>
-      </div>
+       </div>
 
       {/* Budget List */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-              <h3 className="font-bold text-slate-700 flex items-center gap-2">
-                  <Wallet size={20} className="text-slate-400"/> รายการงบประมาณ
-              </h3>
-              <span className="text-xs font-bold text-slate-400 bg-white px-3 py-1 rounded-full border border-slate-200">
-                  {categories.length} หมวด
-              </span>
-          </div>
-          
-          <div className="divide-y divide-slate-100">
-              {categories.length === 0 && (
-                  <div className="p-10 text-center text-slate-400">ยังไม่มีหมวดหมู่ เริ่มสร้างด้านบนได้เลยครับ</div>
-              )}
-              {categories.map((cat) => (
-                  <div key={cat.id} className="p-5 flex items-center justify-between hover:bg-slate-50 transition group">
-                      <div className="flex items-center gap-4 flex-1">
-                          <div className="bg-white border border-slate-100 p-3 rounded-2xl shadow-sm text-blue-600">
-                              {/* ✅ ส่ง icon โดยมี null fallback */}
-                              <CategoryIcon iconName={cat.icon || undefined} size={22} />
-                          </div>
-                          <div className="flex items-center gap-2">
-                              <span className="font-bold text-slate-700 text-lg">{cat.name}</span>
-                              <button onClick={() => setEditingCategory(cat)} className="text-slate-300 hover:text-blue-500 transition opacity-0 group-hover:opacity-100">
-                                  <Pencil size={16} />
-                              </button>
-                          </div>
-                      </div>
-                      <div className="flex items-center gap-3 relative">
-                          <span className="text-slate-300 font-bold hidden sm:inline">฿</span>
-                          <div className="relative">
-                              <input 
-                                  type="number" 
-                                  defaultValue={cat.currentBudget}
-                                  onBlur={(e) => handleSetBudget(cat.id, parseFloat(e.target.value))}
-                                  className="w-32 sm:w-40 p-3 bg-slate-50 border border-slate-200 rounded-xl text-right font-bold text-slate-800 outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition"
-                              />
-                              <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-6">
-                                  {savingId === cat.id && <CheckCircle2 size={20} className="text-green-500 animate-in zoom-in" />}
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              ))}
-          </div>
+      <Card className="overflow-hidden">
+           <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+               <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                   <Wallet size={20} className="text-slate-400"/> รายการงบประมาณ
+               </h3>
+               <span className="text-xs font-bold text-slate-400 bg-white px-3 py-1 rounded-full border border-slate-200">
+                   {categories.length} หมวด
+               </span>
+           </div>
+-          <div className="divide-y divide-slate-100">
++          <div className="divide-y divide-slate-100">
+               {categories.length === 0 && (
+                   <div className="p-10 text-center text-slate-400">ยังไม่มีหมวดหมู่ เริ่มสร้างด้านบนได้เลยครับ</div>
+               )}
+               {categories.map((cat) => (
+                   <div key={cat.id} className="p-5 flex items-center justify-between hover:bg-slate-50 transition group">
+                       <div className="flex items-center gap-4 flex-1">
+                           <div className="bg-white border border-slate-100 p-3 rounded-2xl shadow-sm text-blue-600">
+                               {/* ✅ ส่ง icon โดยมี null fallback */}
+                               <CategoryIcon iconName={cat.icon || undefined} size={22} />
+                           </div>
+                           <div className="flex items-center gap-2">
+                               <span className="font-bold text-slate-700 text-lg">{cat.name}</span>
+                               <button onClick={() => setEditingCategory(cat)} className="text-slate-300 hover:text-blue-500 transition opacity-0 group-hover:opacity-100">
+                                   <Pencil size={16} />
+                               </button>
+                           </div>
+                       </div>
+                       <div className="flex items-center gap-3 relative">
+                           <span className="text-slate-300 font-bold hidden sm:inline">฿</span>
+                           <div className="relative">
+                               <input 
+                                   type="number" 
+                                   defaultValue={cat.currentBudget}
+                                   onBlur={(e) => handleSetBudget(cat.id, parseFloat(e.target.value))}
+                                   className="w-32 sm:w-40 p-3 bg-slate-50 border border-slate-200 rounded-xl text-right font-bold text-slate-800 outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition"
+                               />
+                               <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-6">
+                                   {savingId === cat.id && <CheckCircle2 size={20} className="text-green-500 animate-in zoom-in" />}
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               ))}
+           </div>
+      </Card>
       </div>
-
-      {/* Edit Modal */}
-      {editingCategory && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-                  <div className="flex justify-between items-center mb-6">
-                      <h3 className="font-bold text-lg text-slate-800">✏️ แก้ไขหมวดหมู่</h3>
-                      <button onClick={() => setEditingCategory(null)} className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-full"><X size={20}/></button>
-                  </div>
-                  <div className="space-y-5">
-                      <div>
-                          <label className="block text-xs font-bold text-slate-400 ml-1 mb-1 uppercase">ชื่อหมวดหมู่</label>
-                          <input type="text" className="w-full p-4 bg-slate-50 border-0 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold" value={editingCategory.name} onChange={(e) => setEditingCategory({...editingCategory, name: e.target.value})} />
-                      </div>
-                      <div>
-                          <label className="block text-xs font-bold text-slate-400 ml-1 mb-2 uppercase">เลือกไอคอนใหม่</label>
-                          <div className="mb-3 flex justify-center bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
-                              <CategoryIcon iconName={editingCategory.icon || undefined} size={48} />
-                          </div>
-                          <div className="max-h-40 overflow-y-auto border border-slate-100 rounded-2xl p-2 bg-slate-50">
-                              <IconPicker selectedIcon={editingCategory.icon || 'other'} onSelect={(icon) => setEditingCategory({...editingCategory, icon})} />
-                          </div>
-                      </div>
-                      <button onClick={handleUpdateCategory} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 mt-2 shadow-lg shadow-blue-200 active:scale-[0.98] transition">บันทึกการเปลี่ยนแปลง</button>
-                  </div>
-              </div>
-          </div>
-      )}
-    </div>
-  );
-}
+     </div>
+   );
+ }

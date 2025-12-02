@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, BarChart, Bar, ResponsiveContainer, YAxis, Legend, XAxis, CartesianGrid } from 'recharts';
 import { CategoryIcon } from "@/components/IconPicker";
+import Card from "@/components/Card";
+import Button from "@/components/Button";
 
 // --- Components ---
 
@@ -70,11 +72,7 @@ const COLORS = ['#2563EB', '#0EA5E9', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
 
 export default function Page() {
   const { data: session, status } = useSession();
-  
-  // เช็คสถานะ: ถ้ายังไม่ Login -> โชว์ Landing Page
   if (status === "unauthenticated") return <LandingPage />;
-  
-  // ถ้า Login แล้ว -> โชว์ Dashboard
   return <DashboardLogic session={session} status={status} />;
 }
 
@@ -129,29 +127,41 @@ function DashboardLogic({ session, status }: any) {
   const pieData = data.filter(d => d.actual > 0).map(d => ({ name: d.categoryName, value: d.actual }));
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
-      
-      {/* Hero */}
-      <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-        <div>
-           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">ภาพรวมรายจ่าย</h1>
-           <p className="text-slate-500 mt-1 font-medium">สวัสดี, {session?.user?.email}</p>
-        </div>
-        <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition active:scale-95 flex items-center gap-2">
-           <Plus size={20} /> จดรายจ่าย
-        </button>
-      </div>
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+-    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
++    <div className="space-y-8 animate-in fade-in duration-500">
++      <div className="container">
+       {/* Hero */}
+-      <div className="flex flex-col md:flex-row justify-between items-end gap-4">
+-        <div>
+-           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">ภาพรวมรายจ่าย</h1>
+-           <p className="text-slate-500 mt-1 font-medium">สวัสดี, {session?.user?.email}</p>
+-        </div>
+-        <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition active:scale-95 flex items-center gap-2">
+-           <Plus size={20} /> จดรายจ่าย
+-        </button>
+-      </div>
++      <Card className="p-6 mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
++        <div>
++          <h1 className="text-2xl md:text-3xl font-bold">ภาพรวมรายจ่าย</h1>
++          <p className="text-sm text-neutral-500 mt-1">สวัสดี, {session?.user?.email}</p>
++        </div>
++        <Button onClick={() => setIsModalOpen(true)} icon={<Plus size={18}/>}>จดรายจ่าย</Button>
++      </Card>
++      </div>
+     {/* Cards */}
+-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
++      <div className="container grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between h-36 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-                <Wallet size={80} className="text-blue-600"/>
-            </div>
-            <div className="flex items-center gap-3 text-slate-500 text-sm font-bold uppercase tracking-wider">
-               <div className="p-2 bg-slate-50 text-slate-600 rounded-xl"><Wallet size={18}/></div> งบทั้งหมด
-            </div>
-            <div className="text-3xl font-bold text-slate-800">฿{totalBudget.toLocaleString()}</div>
+-           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
+-               <Wallet size={80} className="text-blue-600"/>
+-           </div>
++           <div className="absolute top-0 right-0 p-6 opacity-5 transition transform duration-500">
++               <Wallet size={80} className="text-primary-200"/>
++           </div>
+           <div className="flex items-center gap-3 text-slate-500 text-sm font-bold uppercase tracking-wider">
+              <div className="p-2 bg-slate-50 text-slate-600 rounded-xl"><Wallet size={18}/></div> งบทั้งหมด
+           </div>
+           <div className="text-3xl font-bold text-slate-800">฿{totalBudget.toLocaleString()}</div>
          </div>
 
          <div className="bg-blue-600 p-6 rounded-3xl shadow-xl shadow-blue-200 flex flex-col justify-between h-36 text-white relative overflow-hidden group">

@@ -4,6 +4,8 @@ import "./globals.css";
 // ✅ เรียก Providers จากไฟล์ ./providers
 import AuthProvider from "@/components/AuthProvider";
 import Footer from "@/components/Footer";
+// เพิ่ม Navbar
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,19 +31,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* ✅ ใช้ Providers ที่มี s */}
         <AuthProvider>
-          {/* 2. ✅ ครอบด้วย div นี้เพื่อให้ Footer ติดล่างสุดเสมอ */}
           <div className="flex flex-col min-h-screen">
             
+            {/* เพิ่ม Navbar */}
+            <Navbar />
+
             {/* ส่วนเนื้อหาหลัก (ให้ขยายเต็มที่) */}
             <main className="flex-grow">
-              {children}
+              <div className="container py-8">
+                {children}
+              </div>
             </main>
 
-            {/* 3. ✅ ใส่ Footer ไว้ตรงนี้ */}
             <Footer />
-            
           </div>
         </AuthProvider>
       </body>

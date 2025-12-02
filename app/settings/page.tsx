@@ -4,6 +4,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { User, Save, Lock, Camera, AlertCircle, Loader2, Download, Trash2, ShieldAlert, UploadCloud, Crown, CreditCard } from "lucide-react";
+// ✅ new UI components
+import { Card } from "@/components/Card";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
 
 // --- ⚙️ ตั้งค่า Cloudinary ---
 const CLOUD_NAME = "dsabmbgxn"; 
@@ -125,9 +129,10 @@ export default function SettingsPage() {
   if (loadingProfile) return <div className="min-h-screen flex items-center justify-center text-blue-500 font-bold">Loading settings...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 animate-in fade-in duration-500 space-y-6">
-      
-      <h1 className="text-2xl font-bold text-slate-800">ตั้งค่าบัญชี</h1>
+    <div className="animate-in fade-in duration-500 space-y-6">
+      <div className="container">
+       
+       <h1 className="text-2xl font-bold text-slate-800">ตั้งค่าบัญชี</h1>
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-slate-200 overflow-x-auto pb-1">
@@ -142,7 +147,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="bg-white p-8 rounded-b-3xl rounded-tr-3xl shadow-sm border border-slate-100 min-h-[400px]">
+      <Card className="min-h-[400px] p-8">
         
         {/* Tab 1: Profile */}
         {activeTab === "profile" && (
@@ -161,14 +166,15 @@ export default function SettingsPage() {
                             <h3 className="font-bold text-slate-700 mb-1">รูปโปรไฟล์</h3>
                             <p className="text-xs text-slate-400 mb-3">แนะนำขนาด 1:1 (ไม่เกิน 5MB)</p>
                             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange}/>
-                            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage} className="text-sm border border-slate-200 bg-slate-50 hover:bg-white px-4 py-2 rounded-xl font-bold text-slate-600 transition flex items-center gap-2 mx-auto sm:mx-0"><UploadCloud size={16}/> {uploadingImage ? "กำลังอัปโหลด..." : "อัปโหลดรูปใหม่"}</button>
+                            <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage} icon={<UploadCloud size={16} />}>{uploadingImage ? "กำลังอัปโหลด..." : "อัปโหลดรูปใหม่"}</Button>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1 ml-1">ชื่อเล่น / ชื่อที่แสดง</label>
-                        <input type="text" placeholder="ชื่อของคุณ" className="w-full p-4 bg-slate-50 border-0 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700" value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} />
+                        <Input label="ชื่อเล่น / ชื่อที่แสดง" placeholder="ชื่อของคุณ" value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} />
                     </div>
-                    <button type="submit" disabled={savingProfile || uploadingImage} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-70 flex items-center gap-2">{savingProfile ? <Loader2 className="animate-spin"/> : <Save size={18}/>} บันทึกการเปลี่ยนแปลง</button>
+                    <div className="flex justify-end">
+                      <Button type="submit" loading={savingProfile} icon={<Save size={16}/>}>บันทึกการเปลี่ยนแปลง</Button>
+                    </div>
                 </form>
             </div>
         )}
@@ -178,11 +184,11 @@ export default function SettingsPage() {
             <div className="animate-in fade-in slide-in-from-left-4 duration-300 max-w-lg">
                 <h2 className="text-lg font-bold text-slate-800 mb-6">เปลี่ยนรหัสผ่าน</h2>
                 <form onSubmit={handleChangePassword} className="space-y-4">
-                    <div><label className="block text-xs font-bold text-slate-400 uppercase mb-1 ml-1">รหัสผ่านปัจจุบัน</label><input type="password" required className="w-full p-4 bg-slate-50 border-0 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium" value={pass.current} onChange={e => setPass({...pass, current: e.target.value})} /></div>
+                    <div><Input label="รหัสผ่านปัจจุบัน" type="password" required value={pass.current} onChange={e => setPass({...pass, current: e.target.value})} /></div>
                     <hr className="border-slate-100 my-2"/>
-                    <div><label className="block text-xs font-bold text-slate-400 uppercase mb-1 ml-1">รหัสผ่านใหม่</label><input type="password" required className="w-full p-4 bg-slate-50 border-0 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium" value={pass.new} onChange={e => setPass({...pass, new: e.target.value})} /></div>
-                    <div><label className="block text-xs font-bold text-slate-400 uppercase mb-1 ml-1">ยืนยันรหัสผ่านใหม่</label><input type="password" required className="w-full p-4 bg-slate-50 border-0 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium" value={pass.confirm} onChange={e => setPass({...pass, confirm: e.target.value})} /></div>
-                    <button type="submit" disabled={savingPass} className="bg-slate-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition shadow-lg shadow-slate-200 mt-2 disabled:opacity-70 flex items-center gap-2">{savingPass ? <Loader2 className="animate-spin"/> : "เปลี่ยนรหัสผ่าน"}</button>
+                    <div><Input label="รหัสผ่านใหม่" type="password" required value={pass.new} onChange={e => setPass({...pass, new: e.target.value})} /></div>
+                    <div><Input label="ยืนยันรหัสผ่านใหม่" type="password" required value={pass.confirm} onChange={e => setPass({...pass, confirm: e.target.value})} /></div>
+                    <div className="flex justify-end"><Button type="submit" disabled={savingPass} loading={savingPass}>เปลี่ยนรหัสผ่าน</Button></div>
                 </form>
             </div>
         )}
@@ -192,60 +198,69 @@ export default function SettingsPage() {
             <div className="animate-in fade-in slide-in-from-left-4 duration-300 space-y-8 max-w-2xl">
                 
                 {/* Subscription Section */}
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                            สถานะสมาชิก
-                            {(session?.user as any)?.plan === 'PRO' ? (
-                                <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md text-[10px] font-bold border border-amber-200 flex items-center gap-1 uppercase tracking-wide">
-                                    <Crown size={10} fill="currentColor"/> Pro Member
-                                </span>
-                            ) : (
-                                <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md text-[10px] font-bold border border-slate-300 uppercase tracking-wide">Free Starter</span>
-                            )}
-                        </h3>
-                        <p className="text-sm text-slate-500 mt-1">
-                            {(session?.user as any)?.plan === 'PRO' 
-                                ? "คุณได้รับสิทธิ์ใช้งานเต็มรูปแบบ สร้างหมวดหมู่ได้ไม่จำกัด" 
-                                : "จำกัดการสร้างหมวดหมู่สูงสุด 5 รายการ"}
-                        </p>
-                    </div>
-                    
-                    {/* Action Button: Upgrade or Downgrade */}
-                    {(session?.user as any)?.plan === 'PRO' ? (
-                        <button 
-                            onClick={handleDowngrade}
-                            className="bg-white border border-slate-300 text-slate-600 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm whitespace-nowrap flex items-center gap-2"
-                        >
-                            ยกเลิก Pro Plan
-                        </button>
-                    ) : (
-                        <a href="/pricing" className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 whitespace-nowrap flex items-center gap-2">
-                            <CreditCard size={16}/> อัปเกรดทันที
-                        </a>
-                    )}
-                </div>
+                <Card className="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                     <div>
+                         <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                             สถานะสมาชิก
+                             {(session?.user as any)?.plan === 'PRO' ? (
+                                 <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md text-[10px] font-bold border border-amber-200 flex items-center gap-1 uppercase tracking-wide">
+                                     <Crown size={10} fill="currentColor"/> Pro Member
+                                 </span>
+                             ) : (
+                                 <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md text-[10px] font-bold border border-slate-300 uppercase tracking-wide">Free Starter</span>
+                             )}
+                         </h3>
+                         <p className="text-sm text-slate-500 mt-1">
+                             {(session?.user as any)?.plan === 'PRO' 
+                                 ? "คุณได้รับสิทธิ์ใช้งานเต็มรูปแบบ สร้างหมวดหมู่ได้ไม่จำกัด" 
+                                 : "จำกัดการสร้างหมวดหมู่สูงสุด 5 รายการ"}
+                         </p>
+                     </div>
+                     
+                     {/* Action Button: Upgrade or Downgrade */}
+                     {(session?.user as any)?.plan === 'PRO' ? (
+-                            <button 
+-                                onClick={handleDowngrade}
+-                                className="bg-white border border-slate-300 text-slate-600 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm whitespace-nowrap flex items-center gap-2"
+-                            >
+-                                ยกเลิก Pro Plan
+-                            </button>
++                            <Button onClick={handleDowngrade} variant="secondary">ยกเลิก Pro Plan</Button>
++                        ) : (
++                            <Link href="/pricing"><Button variant="primary"><CreditCard size={16} /> อัปเกรดทันที</Button></Link>
++                        )}
+                     </div
+ 
+                     <hr className="border-slate-100"/>
+ 
+                     <div className="text-sm text-slate-500">
+                         <p className="mb-1">การชำระเงินถัดไปของคุณจะเกิดขึ้นในวันที่:</p>
+                         <p className="font-bold text-slate-700">15 มีนาคม 2023</p>
+                     </div>
+                 </Card>
 
-                <hr className="border-slate-100"/>
+                 <hr className="border-slate-100"/>
 
-                {/* Data Section */}
-                <div>
-                    <h2 className="text-lg font-bold text-slate-800 mb-2">ข้อมูลของคุณ</h2>
-                    <p className="text-slate-500 text-sm mb-4">ดาวน์โหลดข้อมูลรายการทั้งหมดของคุณเก็บไว้เป็นไฟล์ CSV</p>
-                    <button className="border border-slate-200 text-slate-600 px-6 py-3 rounded-xl font-bold hover:bg-slate-50 transition flex items-center gap-2"><Download size={18}/> Export CSV</button>
-                </div>
-                
-                <hr className="border-slate-100"/>
-                
-                {/* Danger Zone */}
-                <div>
-                    <h2 className="text-lg font-bold text-red-600 mb-2">ลบบัญชีผู้ใช้ (Danger Zone)</h2>
-                    <p className="text-slate-500 text-sm mb-4">เมื่อลบบัญชี ข้อมูลทั้งหมดจะถูกลบถาวรและไม่สามารถกู้คืนได้ โปรดระวัง</p>
-                    <button onClick={() => alert("ระบบกำลังพัฒนา")} className="bg-red-50 text-red-600 border border-red-100 px-6 py-3 rounded-xl font-bold hover:bg-red-100 transition flex items-center gap-2"><Trash2 size={18}/> ลบบัญชีถาวร</button>
-                </div>
-            </div>
-        )}
+                 {/* Data Section */}
+                 <div>
+                     <h2 className="text-lg font-bold text-slate-800 mb-2">ข้อมูลของคุณ</h2>
+                     <p className="text-slate-500 text-sm mb-4">ดาวน์โหลดข้อมูลรายการทั้งหมดของคุณเก็บไว้เป็นไฟล์ CSV</p>
+                     <button className="border border-slate-200 text-slate-600 px-6 py-3 rounded-xl font-bold hover:bg-slate-50 transition flex items-center gap-2"><Download size={18}/> Export CSV</button>
+                 </div>
+                 
+                 <hr className="border-slate-100"/>
+                 
+                 {/* Danger Zone */}
+                 <div>
+                     <h2 className="text-lg font-bold text-red-600 mb-2">ลบบัญชีผู้ใช้ (Danger Zone)</h2>
+                     <p className="text-slate-500 text-sm mb-4">เมื่อลบบัญชี ข้อมูลทั้งหมดจะถูกลบถาวรและไม่สามารถกู้คืนได้ โปรดระวัง</p>
+-                    <button onClick={() => alert("ระบบกำลังพัฒนา")} className="bg-red-50 text-red-600 border border-red-100 px-6 py-3 rounded-xl font-bold hover:bg-red-100 transition flex items-center gap-2"><Trash2 size={18}/> ลบบัญชีถาวร</button>
++                    <Button variant="danger" onClick={() => alert("ระบบกำลังพัฒนา")}><Trash2 size={18}/> ลบบัญชีถาวร</Button>
+                 </div>
+             </div>
+         )}
+      </Card>
       </div>
-    </div>
-  );
-}
+     </div>
+   );
+ }

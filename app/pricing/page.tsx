@@ -4,6 +4,10 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react"; // ✅ Import useSession
 import { useRouter } from "next/navigation";
 import { Check, X, ShieldCheck, Zap, Crown, Loader2 } from "lucide-react";
+// ✅ new UI imports
+import Card from "@/components/Card";
+import Button from "@/components/Button";
+import Badge from "@/components/Badge";
 
 type Plan = {
   id: string;
@@ -70,7 +74,7 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
-      <div className="max-w-5xl mx-auto space-y-12">
+      <div className="container space-y-12">
         
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-extrabold text-slate-800">อัปเกรดเป็น PRO</h1>
@@ -78,50 +82,31 @@ export default function PricingPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {plans.map((plan) => (
-            <div key={plan.id} className={`relative bg-white rounded-3xl p-8 border-2 transition-all hover:-translate-y-2 duration-300 flex flex-col ${plan.isRecommended ? 'border-blue-500 shadow-xl shadow-blue-100' : 'border-slate-100 shadow-sm'}`}>
-              {plan.isRecommended && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow-md">
-                  <Crown size={12} fill="currentColor"/> แนะนำ
+          {plans.map(plan => (
+            <Card key={plan.id} className={`${plan.isRecommended ? 'border-primary-500 shadow-lg' : ''} p-6`}>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="font-bold text-xl">{plan.name}</h3>
+                  <div className="text-3xl font-extrabold text-primary-600 mt-2">฿{plan.price}</div>
+                  <div className="text-sm text-neutral-500">/ {plan.days} วัน</div>
                 </div>
-              )}
-              
-              <div className="mb-6">
-                <h3 className="font-bold text-xl text-slate-700">{plan.name}</h3>
-                <div className="flex items-baseline mt-2">
-                  <span className="text-4xl font-extrabold text-slate-900">฿{plan.price}</span>
-                  <span className="text-slate-400 ml-2 font-medium">/ {plan.days} วัน</span>
-                </div>
+                {plan.isRecommended && <Badge>แนะนำ</Badge>}
               </div>
-
-              <ul className="space-y-4 mb-8 flex-1">
-                <li className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                  <div className="p-1 bg-green-100 text-green-600 rounded-full"><Check size={14}/></div>
-                  สร้างหมวดหมู่ได้ไม่จำกัด
-                </li>
-                <li className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                  <div className="p-1 bg-green-100 text-green-600 rounded-full"><Check size={14}/></div>
-                  ใช้งานได้ทุกฟีเจอร์
-                </li>
+              <ul className="space-y-3 mb-6 text-neutral-600">
+                <li className="flex items-center gap-2"><Check className="text-success-500"/> สร้างหมวดหมู่ได้ไม่จำกัด</li>
+                <li className="flex items-center gap-2"><Check className="text-success-500"/> ใช้งานได้ทุกฟีเจอร์</li>
               </ul>
-
-              <button 
-                onClick={() => handleBuy(plan)}
-                disabled={!!processing}
-                className={`w-full py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 ${plan.isRecommended ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
-              >
-                {processing === plan.id ? <Loader2 className="animate-spin"/> : <><Zap size={18} fill="currentColor"/> เลือกแพ็กเกจนี้</>}
-              </button>
-            </div>
+              <Button onClick={()=>handleBuy(plan)} loading={processing===plan.id} className="w-full"><Zap/> เลือกแพ็กเกจนี้</Button>
+            </Card>
           ))}
         </div>
-        
+ 
         <div className="text-center">
-            <p className="text-sm text-slate-400 font-medium flex items-center justify-center gap-2"><ShieldCheck size={16}/> ชำระเงินปลอดภัยผ่าน QR Code PromptPay</p>
+            <p className="text-sm text-neutral-500 font-medium flex items-center justify-center gap-2"><ShieldCheck size={16}/> ชำระเงินปลอดภัยผ่าน QR Code PromptPay</p>
         </div>
-      </div>
-
-      {/* Payment Modal */}
+       </div>
+ 
+       {/* Payment Modal */}
       {showModal && paymentData && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in">
           <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 relative overflow-hidden">
