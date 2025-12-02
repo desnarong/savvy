@@ -1,20 +1,34 @@
 // components/IconPicker.tsx
-import { Coffee, Home, Utensils, Zap, ShoppingCart, Heart, Briefcase, TrendingUp } from "lucide-react";
+import { Coffee, Home, Utensils, Zap, ShoppingCart, Heart, Briefcase, TrendingUp, Bus, ShoppingBag, Smartphone } from "lucide-react";
+import React, { useState } from "react";
 
 const iconMap: Record<string, React.ReactNode> = {
   coffee: <Coffee size={20} />,
   home: <Home size={20} />,
   food: <Utensils size={20} />,
-  electric: <Zap size={20} />,
+  transport: <Bus size={20} />,
   shopping: <ShoppingCart size={20} />,
   heart: <Heart size={20} />,
   work: <Briefcase size={20} />,
   income: <TrendingUp size={20} />,
 };
 
+// ✅ เพิ่ม Bus import และแก้ ShoppingBag
+export const iconOptions = [
+  { name: "food", icon: Utensils },
+  { name: "transport", icon: Bus },
+  { name: "home", icon: Home },
+  { name: "shopping", icon: ShoppingCart },
+  { name: "coffee", icon: Coffee },
+  { name: "heart", icon: Heart },
+  { name: "work", icon: Briefcase },
+  { name: "income", icon: TrendingUp },
+];
+
+// ✅ เพิ่ม className prop support
 export function CategoryIcon({ iconName, size = 20, className = "" }: { iconName?: string | null; size?: number; className?: string }) {
   const icon = iconName || undefined;
-  if (!icon) return <ShoppingCart size={size} className={className} />;
+  if (!icon) return <div className={className}><ShoppingCart size={size} /></div>;
   
   return (
     <div className={className}>
@@ -23,49 +37,22 @@ export function CategoryIcon({ iconName, size = 20, className = "" }: { iconName
   );
 }
 
-export const iconOptions = [
-  { name: "food", icon: Utensils },
-  { name: "transport", icon: Bus },
-  { name: "home", icon: ShoppingBag },
-  { name: "shopping", icon: ShoppingBag },
-  { name: "coffee", icon: Coffee },
-  { name: "entertainment", icon: Film },
-  { name: "gift", icon: Gift },
-  { name: "health", icon: Heart },
-  { name: "game", icon: Gamepad2 },
-  { name: "education", icon: Book },
-  { name: "phone", icon: Smartphone },
-  { name: "medical", icon: Stethoscope },
-  { name: "travel", icon: Plane },
-  { name: "other", icon: MoreHorizontal },
-];
-
-interface IconPickerProps {
-  selectedIcon: string;
-  onSelect: (iconName: string) => void;
-}
-
-export const IconPicker = ({ selectedIcon, onSelect }: IconPickerProps) => {
+export function IconPicker({ selectedIcon, onSelect }: { selectedIcon: string; onSelect: (icon: string) => void }) {
   return (
-    <div className="grid grid-cols-7 gap-2 p-2 border border-slate-200 rounded-2xl bg-slate-50 max-h-48 overflow-y-auto custom-scrollbar">
-      {iconOptions.map((option) => {
-        const Icon = option.icon;
-        const isSelected = selectedIcon === option.name;
-        return (
-          <button
-            key={option.name}
-            onClick={() => onSelect(option.name)}
-            className={`p-3 rounded-xl flex justify-center items-center transition duration-200 ${
-              isSelected 
-                ? "bg-blue-600 text-white shadow-md shadow-blue-200 scale-105" // <-- สีน้ำเงินที่ถูกต้อง
-                : "bg-white text-slate-400 hover:bg-blue-50 hover:text-blue-500 border border-slate-100"
-            }`}
-            type="button"
-          >
-            <Icon size={20} strokeWidth={isSelected ? 2.5 : 2} />
-          </button>
-        );
-      })}
+    <div className="grid grid-cols-4 gap-2">
+      {iconOptions.map(option => (
+        <button
+          key={option.name}
+          onClick={() => onSelect(option.name)}
+          className={`p-3 rounded-xl border-2 transition flex items-center justify-center ${
+            selectedIcon === option.name
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"
+          }`}
+        >
+          <option.icon size={24} />
+        </button>
+      ))}
     </div>
   );
-};
+}
