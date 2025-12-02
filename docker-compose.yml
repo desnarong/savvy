@@ -28,6 +28,19 @@ services:
       - PAYNOI_ACCOUNT_NO=0952955929
       - PAYNOI_ACCOUNT_TYPE=1
       - NODE_OPTIONS=--dns-result-order=ipv4first
+
+    # expose app port (helps debug direct access and healthcheck)
+    ports:
+      - "3000:3000"
+
+    # healthcheck so other services can wait until Next.js responds
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 10s
+
     depends_on:
       # ✅ รอให้ db ready
       db:
@@ -61,8 +74,10 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+    # wait for app to be healthy before starting Caddy
     depends_on:
-      - app
+      app:
+        condition: service_healthy
 
 volumes:
   postgres_data:
