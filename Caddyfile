@@ -4,6 +4,17 @@
     auto_https off
 }
 
+# ✅ ถ้า localhost
+localhost {
+    reverse_proxy app:3000
+}
+
+# ✅ ถ้า production domain
 savvyapp.cc {
     reverse_proxy app:3000
+}
+
+# ✅ www subdomain redirect to main domain
+www.savvyapp.cc {
+    redir https://savvyapp.cc{uri} permanent
 }
