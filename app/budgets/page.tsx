@@ -237,8 +237,7 @@ export default function BudgetPage() {
                    {categories.length} หมวด
                </span>
            </div>
--          <div className="divide-y divide-slate-100">
-+          <div className="divide-y divide-slate-100">
+           <div className="divide-y divide-slate-100">
                {categories.length === 0 && (
                    <div className="p-10 text-center text-slate-400">ยังไม่มีหมวดหมู่ เริ่มสร้างด้านบนได้เลยครับ</div>
                )}

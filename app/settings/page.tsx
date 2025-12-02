@@ -219,16 +219,10 @@ export default function SettingsPage() {
                      
                      {/* Action Button: Upgrade or Downgrade */}
                      {(session?.user as any)?.plan === 'PRO' ? (
--                            <button 
--                                onClick={handleDowngrade}
--                                className="bg-white border border-slate-300 text-slate-600 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm whitespace-nowrap flex items-center gap-2"
--                            >
--                                ยกเลิก Pro Plan
--                            </button>
-+                            <Button onClick={handleDowngrade} variant="secondary">ยกเลิก Pro Plan</Button>
-+                        ) : (
-+                            <Link href="/pricing"><Button variant="primary"><CreditCard size={16} /> อัปเกรดทันที</Button></Link>
-+                        )}
+                            <Button onClick={handleDowngrade} variant="secondary">ยกเลิก Pro Plan</Button>
+                        ) : (
+                            <Link href="/pricing"><Button variant="primary"><CreditCard size={16} /> อัปเกรดทันที</Button></Link>
+                        )}
                      </div
  
                      <hr className="border-slate-100"/>
@@ -254,8 +248,7 @@ export default function SettingsPage() {
                  <div>
                      <h2 className="text-lg font-bold text-red-600 mb-2">ลบบัญชีผู้ใช้ (Danger Zone)</h2>
                      <p className="text-slate-500 text-sm mb-4">เมื่อลบบัญชี ข้อมูลทั้งหมดจะถูกลบถาวรและไม่สามารถกู้คืนได้ โปรดระวัง</p>
--                    <button onClick={() => alert("ระบบกำลังพัฒนา")} className="bg-red-50 text-red-600 border border-red-100 px-6 py-3 rounded-xl font-bold hover:bg-red-100 transition flex items-center gap-2"><Trash2 size={18}/> ลบบัญชีถาวร</button>
-+                    <Button variant="danger" onClick={() => alert("ระบบกำลังพัฒนา")}><Trash2 size={18}/> ลบบัญชีถาวร</Button>
+                     <Button variant="danger" onClick={() => alert("ระบบกำลังพัฒนา")}><Trash2 size={18}/> ลบบัญชีถาวร</Button>
                  </div>
              </div>
          )}
