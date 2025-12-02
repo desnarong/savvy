@@ -304,7 +304,7 @@ export default function BudgetPage() {
                       <div>
                           <label className="block text-xs font-bold text-slate-400 ml-1 mb-2 uppercase">เลือกไอคอนใหม่</label>
                           <div className="mb-3 flex justify-center bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
-                              <CategoryIcon iconName={editingCategory.icon} size={48} className="text-blue-600 drop-shadow-sm" />
+                              <CategoryIcon iconName={editingCategory.icon || undefined} size={48} />
                           </div>
                           <div className="max-h-40 overflow-y-auto border border-slate-100 rounded-2xl p-2 bg-slate-50">
                               <IconPicker selectedIcon={editingCategory.icon || 'other'} onSelect={(icon) => setEditingCategory({...editingCategory, icon})} />
