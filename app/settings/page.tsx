@@ -223,37 +223,12 @@ export default function SettingsPage() {
                         ) : (
                             <Link href="/pricing"><Button variant="primary"><CreditCard size={16} /> อัปเกรดทันที</Button></Link>
                         )}
-                     </div
- 
-                     <hr className="border-slate-100"/>
- 
-                     <div className="text-sm text-slate-500">
-                         <p className="mb-1">การชำระเงินถัดไปของคุณจะเกิดขึ้นในวันที่:</p>
-                         <p className="font-bold text-slate-700">15 มีนาคม 2023</p>
-                     </div>
-                 </Card>
+            </div>
 
-                 <hr className="border-slate-100"/>
+            <hr className="border-slate-100"/>
 
-                 {/* Data Section */}
-                 <div>
-                     <h2 className="text-lg font-bold text-slate-800 mb-2">ข้อมูลของคุณ</h2>
-                     <p className="text-slate-500 text-sm mb-4">ดาวน์โหลดข้อมูลรายการทั้งหมดของคุณเก็บไว้เป็นไฟล์ CSV</p>
-                     <button className="border border-slate-200 text-slate-600 px-6 py-3 rounded-xl font-bold hover:bg-slate-50 transition flex items-center gap-2"><Download size={18}/> Export CSV</button>
-                 </div>
-                 
-                 <hr className="border-slate-100"/>
-                 
-                 {/* Danger Zone */}
-                 <div>
-                     <h2 className="text-lg font-bold text-red-600 mb-2">ลบบัญชีผู้ใช้ (Danger Zone)</h2>
-                     <p className="text-slate-500 text-sm mb-4">เมื่อลบบัญชี ข้อมูลทั้งหมดจะถูกลบถาวรและไม่สามารถกู้คืนได้ โปรดระวัง</p>
-                     <Button variant="danger" onClick={() => alert("ระบบกำลังพัฒนา")}><Trash2 size={18}/> ลบบัญชีถาวร</Button>
-                 </div>
-             </div>
-         )}
-      </Card>
-      </div>
-     </div>
-   );
- }
+            <div className="text-sm text-slate-500">
+                <p className="mb-1">การชำระเงินถัดไปของคุณจะเกิดขึ้นในวันที่:</p>
+                <p className="font-bold text-slate-700">15 มีนาคม 2023</p>
+            </div>
+        
