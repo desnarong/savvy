@@ -1,0 +1,64 @@
+# version: '3.8'
+
+services:
+  app:
+    container_name: savvy_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+      - 1.1.1.1
+    environment:
+      # แก้ไข 1: แปลง # เป็น %23 และลบ @db ที่ซ้ำออก
+      - DATABASE_URL=postgresql://postgres:savvy%23Admin01@db:5432/savvy_db
+      
+      - NEXTAUTH_URL=https://savvyapp.cc
+      - NEXTAUTH_SECRET=7d82f9a1c3e4b5d6a7f8e9c0b1a2d3e4f5a6b7c8d9e0f1a2b3c4d5e6
+      
+      - CLOUD_NAME=dsabmbgxn
+      - UPLOAD_PRESET=savvy_images
+      
+      - RESEND_API_KEY=re_ewnExVbH_GJWpyMKsBCdJ6WxpPrJgXJ9i
+      - RESEND_FROM_EMAIL=onboarding@resend.dev
+      
+      - PAYNOI_API_KEY=37eed929449ed4282ed721773679f43599471a17a818d5a5252838f52ba572e3
+      - PAYNOI_KEY_ID=100568
+      # แก้ไข 2: ลบตัว 'เ' ออก
+      - PAYNOI_ACCOUNT_NO=0952955929
+      - PAYNOI_ACCOUNT_TYPE=1
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+    depends_on:
+      - db
+
+  db:
+    container_name: savvy_db
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      # แก้ไข 3: ใส่ '' ครอบรหัสผ่านที่มีตัว #
+      POSTGRES_PASSWORD: 'savvy#Admin01'
+      POSTGRES_DB: savvy_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,9 @@
+{
+    # ถ้าใช้ Cloudflare แบบ Full (Strict) ให้เปิดบรรทัดนี้ เพื่อให้ Caddy ใช้ Self-signed cert ภายใน
+    # แต่ Cloudflare จะเห็นว่าเป็น HTTPS ที่ถูกต้อง
+    auto_https off
+}
+
+http://savvyapp.cc, https://savvyapp.cc {
+    reverse_proxy app:3000
+}
