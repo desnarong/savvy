@@ -12,9 +12,10 @@ const iconMap: Record<string, React.ReactNode> = {
   income: <TrendingUp size={20} />,
 };
 
-export function CategoryIcon({ iconName, size = 20 }: { iconName?: string; size?: number }) {
-  if (!iconName) return <ShoppingCart size={size} />;
-  return iconMap[iconName.toLowerCase()] || <ShoppingCart size={size} />;
+export function CategoryIcon({ iconName, size = 20 }: { iconName?: string | null; size?: number }) {
+  const icon = iconName || undefined;
+  if (!icon) return <ShoppingCart size={size} />;
+  return iconMap[icon.toLowerCase()] || <ShoppingCart size={size} />;
 }
 
 export const iconOptions = [

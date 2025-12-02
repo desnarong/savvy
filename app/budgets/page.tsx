@@ -259,7 +259,8 @@ export default function BudgetPage() {
                   <div key={cat.id} className="p-5 flex items-center justify-between hover:bg-slate-50 transition group">
                       <div className="flex items-center gap-4 flex-1">
                           <div className="bg-white border border-slate-100 p-3 rounded-2xl shadow-sm text-blue-600">
-                              <CategoryIcon iconName={cat.icon} size={22} />
+                              {/* ✅ ส่ง icon โดยมี null fallback */}
+                              <CategoryIcon iconName={cat.icon || undefined} size={22} />
                           </div>
                           <div className="flex items-center gap-2">
                               <span className="font-bold text-slate-700 text-lg">{cat.name}</span>
