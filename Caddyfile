@@ -4,6 +4,6 @@
     auto_https off
 }
 
-http://savvyapp.cc, https://savvyapp.cc {
+savvyapp.cc {
     reverse_proxy app:3000
 }

@@ -1,50 +1,75 @@
 // app/api/admin/plans/route.ts
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-// GET: ดึงรายการแผนทั้งหมด (ใช้ได้ทั้ง Admin และหน้า Pricing)
 export async function GET() {
-  const plans = await prisma.pricingPlan.findMany({
-    orderBy: { price: 'asc' } // เรียงตามราคา
-  });
-  return NextResponse.json(plans);
-}
-
-// POST: สร้างแผนใหม่ (Admin Only)
-export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const plan = await prisma.pricingPlan.create({ data: body });
-    return NextResponse.json(plan);
+    const plans = await prisma.pricingPlan.findMany({
+      orderBy: { createdAt: "desc" }
+    });
+    return NextResponse.json(plans);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch plans" }, { status: 500 });
   }
 }
 
-// PUT: แก้ไขแผน (Admin Only)
-export async function PUT(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { id, ...data } = await request.json();
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { name, price, days, isRecommended } = await req.json();
+
+    const plan = await prisma.pricingPlan.create({
+      data: { name, price, days, isRecommended }
+    });
+
+    return NextResponse.json(plan);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to create plan" }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id, name, price, days, isRecommended } = await req.json();
+
     const plan = await prisma.pricingPlan.update({
       where: { id },
-      data: data
+      data: { name, price, days, isRecommended }
     });
+
     return NextResponse.json(plan);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update plan" }, { status: 500 });
   }
 }
 
-// DELETE: ลบแผน (Admin Only)
-export async function DELETE(request: Request) {
+export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    if(!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) return NextResponse.json({ error: "Plan ID required" }, { status: 400 });
 
     await prisma.pricingPlan.delete({ where: { id } });
-    return NextResponse.json({ success: true });
+
+    return NextResponse.json({ message: "Plan deleted" });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete plan" }, { status: 500 });
   }
 }

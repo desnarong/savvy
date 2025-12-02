@@ -56,12 +56,12 @@ export const authOptions: NextAuthOptions = {
       if (token.id) {
         const freshUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { plan: true, role: true } // ดึงมาแค่ที่จำเป็นเพื่อความไว
+          select: { plan: true, role: true }
         });
 
         if (freshUser) {
-            token.plan = freshUser.plan;
-            token.role = freshUser.role;
+          token.plan = freshUser.plan;
+          token.role = freshUser.role;
         }
       }
 

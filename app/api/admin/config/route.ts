@@ -1,33 +1,42 @@
 // app/api/admin/config/route.ts
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-// GET: ดึงค่าทั้งหมด
 export async function GET() {
-  const configs = await prisma.systemConfig.findMany({
-    orderBy: { key: 'asc' }
-  });
-  return NextResponse.json(configs);
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const configs = await prisma.systemConfig.findMany();
+    return NextResponse.json(configs);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch config" }, { status: 500 });
+  }
 }
 
-// POST: บันทึกค่า (รับมาเป็น Array แล้ววนลูป update)
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json(); // รับ array [{key, value}, ...]
-    
-    // ใช้ Transaction เพื่อความชัวร์ (ถ้าพังก็พังหมด ไม่เซฟครึ่งๆ กลางๆ)
-    await prisma.$transaction(
-        body.map((config: any) => 
-            prisma.systemConfig.update({
-                where: { key: config.key },
-                data: { value: String(config.value) }
-            })
-        )
-    );
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    return NextResponse.json({ success: true });
+    const configs = await req.json();
+    
+    for (const config of configs) {
+      await prisma.systemConfig.upsert({
+        where: { key: config.key },
+        update: { value: config.value },
+        create: { key: config.key, value: config.value }
+      });
+    }
+
+    return NextResponse.json({ message: "Config updated" });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update config" }, { status: 500 });
   }
 }

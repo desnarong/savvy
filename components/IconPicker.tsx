@@ -1,5 +1,21 @@
 // components/IconPicker.tsx
-import { Utensils, Bus, Home, ShoppingBag, Coffee, Film, Gift, Heart, Gamepad2, Book, Smartphone, Stethoscope, Plane, MoreHorizontal, LucideIcon } from "lucide-react";
+import { Coffee, Home, Utensils, Zap, ShoppingCart, Heart, Briefcase, TrendingUp } from "lucide-react";
+
+const iconMap: Record<string, React.ReactNode> = {
+  coffee: <Coffee size={20} />,
+  home: <Home size={20} />,
+  food: <Utensils size={20} />,
+  electric: <Zap size={20} />,
+  shopping: <ShoppingCart size={20} />,
+  heart: <Heart size={20} />,
+  work: <Briefcase size={20} />,
+  income: <TrendingUp size={20} />,
+};
+
+export function CategoryIcon({ iconName, size = 20 }: { iconName?: string; size?: number }) {
+  if (!iconName) return <ShoppingCart size={size} />;
+  return iconMap[iconName.toLowerCase()] || <ShoppingCart size={size} />;
+}
 
 export const iconOptions = [
   { name: "food", icon: Utensils },
@@ -17,12 +33,6 @@ export const iconOptions = [
   { name: "travel", icon: Plane },
   { name: "other", icon: MoreHorizontal },
 ];
-
-export const CategoryIcon = ({ iconName, size = 20, className = "" }: { iconName?: string | null, size?: number, className?: string }) => {
-  const found = iconOptions.find(opt => opt.name === iconName);
-  const IconComponent = found ? found.icon : MoreHorizontal; 
-  return <IconComponent size={size} className={className} />;
-};
 
 interface IconPickerProps {
   selectedIcon: string;

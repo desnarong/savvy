@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# สร้าง Prisma Client
+# ✅ Generate Prisma Client ก่อน build
 RUN npx prisma generate
 
 # ปิด Telemetry

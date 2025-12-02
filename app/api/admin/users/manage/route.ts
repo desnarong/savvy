@@ -1,45 +1,51 @@
 // app/api/admin/users/manage/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
-// 1. แก้ไขข้อมูลผู้ใช้ (เปลี่ยน Plan / Role)
-export async function PUT(request: Request) {
+export async function PUT(req: NextRequest) {
   try {
-    const { id, role, plan } = await request.json();
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const updatedUser = await prisma.user.update({
+    const { id, role, plan } = await req.json();
+    
+    const user = await prisma.user.update({
       where: { id },
       data: { role, plan }
     });
 
-    return NextResponse.json(updatedUser);
+    return NextResponse.json(user);
   } catch (error) {
-    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
 }
 
-// 2. ลบผู้ใช้ (Delete User)
-export async function DELETE(request: Request) {
+export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
-    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+    if (!id) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
 
-    // ลบข้อมูลที่เกี่ยวข้องก่อน (Cascade Delete)
-    // *หมายเหตุ: ถ้าตั้งค่า Cascade ใน Prisma schema แล้ว ไม่ต้องลบ manual ก็ได้
-    // แต่เพื่อความชัวร์ ลบ transaction/budget/category ก่อน
+    // ลบ User และข้อมูลที่เกี่ยวข้อง
     await prisma.transaction.deleteMany({ where: { userId: id } });
     await prisma.budget.deleteMany({ where: { userId: id } });
     await prisma.category.deleteMany({ where: { userId: id } });
     await prisma.payment.deleteMany({ where: { userId: id } });
-
-    // ลบ User
+    
     await prisma.user.delete({ where: { id } });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ message: 'User deleted' });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
   }
 }

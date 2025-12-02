@@ -1,33 +1,24 @@
 // app/api/categories/route.ts
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
   try {
-    // 1. รับค่า email จาก URL
-    const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get("email");
 
-    if (!email) {
-      // ถ้าไม่มี email ส่ง array ว่างกลับไป เพื่อไม่ให้ Dropdown หน้าบ้านพัง
-      return NextResponse.json([]);
-    }
+    if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
     const user = await prisma.user.findUnique({ where: { email } });
-    
-    // ถ้าไม่เจอ User ก็ส่ง array ว่าง
-    if (!user) return NextResponse.json([]);
 
-    // 2. ดึงหมวดหมู่เฉพาะของ User คนนี้
+    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
     const categories = await prisma.category.findMany({
-      where: { userId: user.id },
-      orderBy: { name: 'asc' }
+      where: { userId: user.id }
     });
 
     return NextResponse.json(categories);
-
   } catch (error) {
-    console.error("Categories API Error:", error);
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
   }
 }

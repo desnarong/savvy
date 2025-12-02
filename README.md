@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Savvy รู้ตังค์ - Personal Finance Manager
 
-## Getting Started
+แอปพลิเคชันจัดการเงินส่วนตัวสำหรับคนรุ่นใหม่ ด้วยกราฟสวยงาม การวิเคราะห์รายจ่าย และการตั้งงบประมาณที่ง่ายต่อใจ
 
-First, run the development server:
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Docker & Docker Compose
+- PostgreSQL 15 (optional - ใช้ Docker)
+
+### Local Development
 
 ```bash
+# 1. Clone repository
+git clone https://github.com/desnarong/savvy.git
+cd savvy
+
+# 2. Install dependencies
+npm install
+
+# 3. Setup environment variables
+cp .env.example .env.local
+# แล้วแก้ไข .env.local ให้ตรงกับระบบของคุณ
+
+# 4. Setup database
+npx prisma db push
+npx prisma db seed
+
+# 5. Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิด [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Docker Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 1. Build and run
+docker-compose up -d
 
-## Learn More
+# 2. Run migrations
+docker exec savvy_app npx prisma db push
+docker exec savvy_app npx prisma db seed
 
-To learn more about Next.js, take a look at the following resources:
+# 3. Access the app
+# Open https://yourdomain.com (หรือ http://localhost ถ้า local)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📁 Project Structure

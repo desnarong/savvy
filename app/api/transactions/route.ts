@@ -1,15 +1,18 @@
 // app/api/transactions/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // 1. POST: บันทึกรายจ่ายใหม่
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, amount, categoryId, note, date } = body;
+    const { email, amount, categoryId, note, date } = await req.json();
 
-    // หา User ID (เหมือนเดิมครับ ใช้แก้ขัดไปก่อนจะมี Login จริง)
+    if (!email || !amount || !categoryId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
     const transaction = await prisma.transaction.create({
@@ -17,13 +20,13 @@ export async function POST(request: Request) {
         amount: parseFloat(amount),
         categoryId,
         userId: user.id,
-        note,
-        date: new Date(date), // แปลง string เป็น Date Object
+        note: note || '',
+        date: new Date(date),
       },
     });
 
     return NextResponse.json(transaction);
   } catch (error) {
-    return NextResponse.json({ error: 'Error creating transaction' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 });
   }
 }
