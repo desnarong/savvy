@@ -1,0 +1,107 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String        @id @default(cuid()) // ใช้ CUID เพื่อความปลอดภัยกว่า ID 1,2,3
+  email        String        @unique
+  password     String
+  name         String?
+  image        String?
+  createdAt    DateTime      @default(now())
+  categories   Category[]
+  transactions Transaction[]
+  budgets      Budget[]
+  resetToken        String?   @unique
+  resetTokenExpiry  DateTime?
+  // --- เพิ่มส่วน Monetization ---
+  plan              Plan      @default(FREE)
+  subscriptionId    String?   // เก็บ ID จาก Stripe/Omise (เผื่ออนาคต)
+  subscriptionEnds  DateTime? // วันหมดอายุ Pro
+  payments          Payment[]
+  role              Role      @default(USER)
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  icon         String?
+  type         String        // 'INCOME' หรือ 'EXPENSE'
+  userId       String        // ผูกกับ User คนไหน (SaaS ต้องมี)
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+  budgets      Budget[]
+
+  @@unique([name, userId]) // ชื่อหมวดหมู่ห้ามซ้ำใน User คนเดียวกัน
+}
+
+model Budget {
+  id           String   @id @default(cuid())
+  amount       Decimal  @db.Decimal(10, 2)
+  month        Int      // 1-12
+  year         Int      // 2024, 2025
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@unique([month, year, categoryId, userId]) // ป้องกันการตั้งงบซ้ำในเดือนเดิม
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  amount       Decimal  @db.Decimal(10, 2)
+  date         DateTime
+  note         String?
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Float
+  ref1        String   @unique // เลขออเดอร์ของเรา
+  ref2        String?
+  transId     String?  // รหัสธุรกรรมจาก Paynoi (PPAY_...)
+  status      String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  qrCode      String?  // เก็บ Base64 รูป QR เผื่อดึงซ้ำ (ถ้าต้องการ)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SystemConfig {
+  key   String @id  // เช่น "PRO_PRICE"
+  value String      // เช่น "59"
+}
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  name        String   // ชื่อแพ็กเกจ เช่น "รายเดือน", "รายปี"
+  price       Int      // ราคา (บาท)
+  days        Int      // จำนวนวันใช้งาน (30, 365, 36500=ตลอดชีพ)
+  isRecommended Boolean @default(false) // เป็นแพ็กเกจแนะนำหรือไม่
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
