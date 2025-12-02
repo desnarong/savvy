@@ -4,13 +4,9 @@
     # auto_https off
 }
 
-# ✅ Cloudflare Flexible SSL = HTTP only
-savvyapp.cc {
+# ✅ Serve both savvyapp.cc and www.savvyapp.cc without redirect
+savvyapp.cc, www.savvyapp.cc {
     reverse_proxy app:3000
-}
-
-www.savvyapp.cc {
-    redir https://savvyapp.cc{uri} permanent
 }
 
 # ✅ Local testing
